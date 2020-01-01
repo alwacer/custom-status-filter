@@ -4,7 +4,6 @@ source = {
   url = "git://github.com/alwacer/custom-status-filter"
 }
 description = {
-   homepage = "",
    license = "MIT"
 }
 dependencies = {
