@@ -1,11 +1,11 @@
 package = "kong-plugin-custom-status-filter"
 version = "0.1.0-1"
 source = {
-  url = "git://github.com/nvmlabs/kong-custom-error-handlers"
+  url = "git://github.com/alwacer/custom-status-filter"
 }
 description = {
-   homepage = "https://agentapi.rwsentosa.com",
-   license = "RWS"
+   homepage = "",
+   license = "MIT"
 }
 dependencies = {
    "lua ~> 5.1"
