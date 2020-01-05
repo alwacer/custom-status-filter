@@ -19,6 +19,13 @@ end
 
 function CustomStatusFilterHandler:header_filter(conf)
    CustomStatusFilterHandler.super.header_filter(self)
+   local status = kong.response.get_status()
+   if status > 400 and status < 500  then
+      kong.response.set_status(400)
+   else
+      kong.response.set_status(500)
+   end
+   
    -- remove content length to prevent client from waiting for the original content length to download
    kong.response.clear_header("Content-Length")
    kong.response.set_header("X-RWS-SOURCE", kong.response.get_source())
