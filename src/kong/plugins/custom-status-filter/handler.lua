@@ -6,10 +6,21 @@ local kong = kong
 local CustomStatusFilterHandler = BasePlugin:extend()
 
 local DEFAULT_RESPONSE = {
-  
   [400] = "RWS-ERR-4XX",
-  [401] = "Unauthorized",
   [500] = "RWS-ERR-5XX",
+}
+
+local VALID_STATUS_CODE = {
+  [200] = "OK",
+  [201] = "Created",
+  [202] = "Accepted",
+  [203] = "Non-Authoritative Information",
+  [204] = "No Content",
+  [205] = "Reset Content",
+  [206] = "Partial Content",
+  [207] = "Multi-Status",
+  [208] = "Already Reported",
+  [226] = "IM Used",
 }
 
 function CustomStatusFilterHandler:new()
@@ -20,10 +31,9 @@ end
 function CustomStatusFilterHandler:header_filter(conf)
    CustomStatusFilterHandler.super.header_filter(self)
    local status = kong.response.get_status()
-   if status > 400 and status < 500  then
-      kong.response.set_status(400)
-   else
-      kong.response.set_status(500)
+
+   if not is_valid_status(status) then
+      kong.response.set_status(transform_custom_status_codes(status))
    end
    
    -- remove content length to prevent client from waiting for the original content length to download
@@ -38,9 +48,13 @@ function CustomStatusFilterHandler:header_filter(conf)
  
 end  
 
+local function is_valid_status(status_code) 
+  return VALID_STATUS_CODE[status_code] ~= nil
+end  
+
 local function transform_custom_status_codes(status_code)
   -- Non-standard 4XX HTTP codes will be returned as 400 Bad Request
-  if status_code > 401 then
+  if status_code > 400 and status < 500 then
     status_code = 400
   elseif status_code >= 500 then
     status_code = 500
@@ -53,7 +67,7 @@ function CustomStatusFilterHandler:body_filter(conf)
   CustomStatusFilterHandler.super.body_filter(self)
   local status  = transform_custom_status_codes(kong.response.get_status())
 
-  if status > 200 then
+  if not is_valid_status(status) then
      local ctx = ngx.ctx
      local chunk, eof = ngx.arg[1], ngx.arg[2]
 
