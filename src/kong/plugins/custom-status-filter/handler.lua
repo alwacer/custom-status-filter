@@ -11,16 +11,16 @@ local DEFAULT_RESPONSE = {
 }
 
 local VALID_STATUS_CODE = {
-  [200] = "OK",
-  [201] = "Created",
-  [202] = "Accepted",
-  [203] = "Non-Authoritative Information",
-  [204] = "No Content",
-  [205] = "Reset Content",
-  [206] = "Partial Content",
-  [207] = "Multi-Status",
-  [208] = "Already Reported",
-  [226] = "IM Used",
+  [200] = true, --"OK"
+  [201] = true, --""Created",
+  [202] = true, --""Accepted",
+  [203] = true, --""Non-Authoritative Information",
+  [204] = true, --""No Content",
+  [205] = true, --""Reset Content",
+  [206] = true, --""Partial Content",
+  [207] = true, --""Multi-Status",
+  [208] = true, --""Already Reported",
+  [226] = true, --""IM Used",
 }
 
 function CustomStatusFilterHandler:new()
@@ -49,7 +49,10 @@ function CustomStatusFilterHandler:header_filter(conf)
 end  
 
 local function is_valid_status(status_code) 
-  return VALID_STATUS_CODE[status_code] ~= nil
+  if VALID_STATUS_CODE[status_code] == true then
+    return true
+  else  
+    return false
 end  
 
 local function transform_custom_status_codes(status_code)
