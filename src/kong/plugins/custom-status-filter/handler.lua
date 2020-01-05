@@ -53,6 +53,7 @@ local function is_valid_status(status_code)
     return true
   else  
     return false
+  end  
 end  
 
 local function transform_custom_status_codes(status_code)
